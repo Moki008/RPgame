@@ -92,8 +92,13 @@ class Magic(Hero):
         super().__init__(name, health, damage, 'BOOST')
 
     def apply_super_power(self, boss, heroes):
-        # TODO Implementation of BOOST ability
-        pass
+        if round_number < 5:
+            for hero in heroes:
+                hero.damage *= 2
+                print(f'Magic {self.name} boost {hero.name}')
+
+
+
 
 
 class Medic(Hero):
@@ -124,6 +129,32 @@ class Berserk(Hero):
         boss.health -= self.blocked_damage
         print(f'Berserk {self.name} reverted {self.__blocked_damage} damage to boss')
 
+class Witcher(Hero):
+    def __init__(self, name, health):
+        super().__init__(name, health, 0, "GIVE LIVE")
+
+    def apply_super_power(self, boss, heroes):
+        for hero in heroes:
+            if hero.health <= 0 and self != hero:
+                hero.health = 200
+                self.health = 0
+                print(f'Witcher give 200 health to {hero.name}')
+            else:
+                pass
+class Hacker(Hero):
+    def __init__(self, name, health, damage):
+        super().__init__(name, health, damage,"CHEATING")
+
+    def apply_super_power(self, boss, heroes):
+        for hero in heroes:
+            if round_number % 2 == 0 and self != hero:
+                cheating_damage = boss.health -(boss.health - self.damage)
+                random_hero = choice(heroes)
+                random_hero.health += cheating_damage
+                print(f'Hacker {self.name} give {cheating_damage} health to {random_hero.name}')
+                break
+            else:
+                pass
 
 round_number = 0
 
@@ -152,6 +183,8 @@ def play_round(boss, heroes):
         if hero.health > 0 and boss.health > 0 and hero.ability != boss.defence:
             hero.attack(boss)
             hero.apply_super_power(boss, heroes)
+            hero.damage /= 2
+
     show_statistics(boss, heroes)
 
 
@@ -170,8 +203,11 @@ def start_game():
     doc = Medic('Merlin', 250, 5, 15)
     assistant = Medic('Florin', 300, 5, 5)
     berserk = Berserk('Guts', 260, 10)
+    witcher = Witcher('Max', 300)
+    hacker = Hacker('Bill', 150, 20)
 
-    heroes_list = [warrior_1, warrior_2, magic, doc, assistant, berserk]
+
+    heroes_list = [warrior_1, warrior_2, magic, doc, assistant, berserk, witcher, hacker]
 
     show_statistics(boss, heroes_list)
     while not is_game_over(boss, heroes_list):
